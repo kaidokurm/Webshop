@@ -6,6 +6,8 @@ import io.jsonwebtoken.Jwts;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
@@ -14,47 +16,49 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Log4j2
 public class TokenParser extends BasicAuthenticationFilter {
- //   @Value("${token.key}")
     private String key;
-//    //@Value ei saa panna
-    public void setKey(String key){
-        this.key=key;
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public TokenParser(AuthenticationManager authenticationManager) {
         super(authenticationManager);
     }
 
-    //basic - username+password
-    //bearer - token, mille sees on mitmeid v''rtusi
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String token = request.getHeader("Authorization");//saab headerist authorizationi alt
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+        String token = request.getHeader("Authorization");
         if (token != null && token.startsWith("Bearer ")) {
-//            log.info(token);
-            token = token.replace("Bearer ", "");//muudame alguses Beareri ""ga
+            token = token.replace("Bearer ", "");
 
             Claims claims = Jwts.parser()
-                    .setSigningKey(key)//TODO: lisa muutujate alla
+                    .setSigningKey(key)
                     .parseClaimsJws(token)
                     .getBody();
 
             String email = claims.getSubject();
-            String issuer = claims.getIssuer();
+            String role = claims.getIssuer();
 
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(//principial, kes on loginud
-                    email,//unikaalne
-                    null,//v]ib muutuda
-                    null//]igus
+            GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(role);
+            List<GrantedAuthority> roles = new ArrayList<>(Collections.singletonList(grantedAuthority));
+
+            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                    email,
+                    null,
+                    roles
             );
 
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
-//        chain.doFilter(request,response);
-                super.doFilterInternal(request, response, chain);
+        super.doFilterInternal(request, response, chain);
     }
 }
 

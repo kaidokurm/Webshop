@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import javax.annotation.Nullable;
+
 import javax.persistence.*;
 
 @Getter
@@ -22,7 +22,7 @@ public class Product {
     private boolean active;
     private String description;
 
-    private int stock=0;
+    private int stock = 0;
 
     @OneToOne
     private Subcategory Subcategory;

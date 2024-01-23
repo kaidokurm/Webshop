@@ -15,17 +15,16 @@ public class TokenGenerator {
     @Value("${token.key}")
     private String key;
 
-    public AuthData createAuthToken(String email){
-//        AuthData authData = new AuthData();
-        AuthData authData =new AuthData();
-        Date newDate= DateUtils.addHours(new Date(), 5);
+    public AuthData createAuthToken(String email) {
+        AuthData authData = new AuthData();
+        Date newDate = DateUtils.addHours(new Date(), 5);
 
         String token = Jwts.builder()
-                .signWith(SignatureAlgorithm.HS512, key)//allkirjastus alati peaks olema TODO: Muuda Muutujaks
-                .setIssuer("webshop")//andis selle v'lja
-                .setSubject(email)//lisa email peaks ka olema
-                .setExpiration(newDate)//lisa
-                .compact();//koostab tokeni
+                .signWith(SignatureAlgorithm.HS512, key)
+                .setIssuer("webshop")
+                .setSubject(email)
+                .setExpiration(newDate)
+                .compact();
 
         authData.setToken(token);
         authData.setExpiration(newDate);

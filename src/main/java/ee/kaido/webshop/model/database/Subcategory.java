@@ -15,7 +15,7 @@ import javax.persistence.*;
 public class Subcategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(nullable = false)
     private Long id;
     private String name;
     @ManyToOne(cascade = CascadeType.MERGE)
