@@ -36,7 +36,7 @@ public class CategoryController {
     @PostMapping
     public ResponseEntity<List<Category>> addCategory(@RequestBody Category category) {
         categoryRepository.save(category);
-        return ResponseEntity.status(HttpStatus.CREATED)//created()
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .body(categoryRepository.findAll());
     }
 

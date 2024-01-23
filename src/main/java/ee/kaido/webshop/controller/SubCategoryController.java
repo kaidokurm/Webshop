@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-//teeme vahem'lu t[hjaks kui toode kustutatakse v]i muudetakse  //productCache.emptyCache();
-
 @Log4j2
 @RestController
 @RequestMapping("subcategory")

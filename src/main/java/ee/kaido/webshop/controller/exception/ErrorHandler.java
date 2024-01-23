@@ -13,38 +13,49 @@ import java.util.NoSuchElementException;
 @ControllerAdvice
 public class ErrorHandler {
 
-    @ExceptionHandler //annoteerime, et see funktioon p[[ab kinni exceptioni
+    @ExceptionHandler
     public ResponseEntity<ExceptionResponse> handleException(MethodArgumentTypeMismatchException e){
-        ExceptionResponse response = new ExceptionResponse();
-        response.setHttpStatus(HttpStatus.BAD_REQUEST);
-        response.setHttpStatusCode(HttpStatus.BAD_REQUEST.value());
-        response.setTimestamp(new Date());
-        response.setMessage("Sisestasid numbri asemel muu s[mboli");
-        // http staatus kood
-        // timestamp
-        // eesti keeles mis juhtus
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        ExceptionResponse response = getExceptionResponse(HttpStatus.BAD_REQUEST, "Sisestasid numbri asemel muu s[mboli");
         return ResponseEntity.badRequest().body(response);
+    }
+    @ExceptionHandler
+    public ResponseEntity<ExceptionResponse> handleException(EmailExistsException e) {
+        ExceptionResponse response = getExceptionResponse(HttpStatus.BAD_REQUEST, "Email juba eksisteerib");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @ExceptionHandler
     public ResponseEntity<ExceptionResponse> handleException(NoSuchElementException e){
-        ExceptionResponse response = new ExceptionResponse();
-        response.setHttpStatus(HttpStatus.NOT_FOUND);
-        response.setHttpStatusCode(HttpStatus.NOT_FOUND.value());
-        response.setTimestamp(new Date());
-        response.setMessage("Otsitud elementi andmebaasist ei leitud");
+        ExceptionResponse response = getExceptionResponse(HttpStatus.NOT_FOUND, "Otsitud elementi andmebaasist ei leitud");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
     @ExceptionHandler
     public ResponseEntity<ExceptionResponse> handleException(HttpRequestMethodNotSupportedException e){
-        ExceptionResponse response = new ExceptionResponse();
-        response.setHttpStatus(HttpStatus.METHOD_NOT_ALLOWED);
-        response.setHttpStatusCode(HttpStatus.METHOD_NOT_ALLOWED.value());
-        response.setTimestamp(new Date());
-        response.setMessage("Sellele endpointile see method ei sobi");
+        ExceptionResponse response = getExceptionResponse(HttpStatus.METHOD_NOT_ALLOWED, "Sellele endpointile see method ei sobi");
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(response);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<ExceptionResponse> handleException(PersonNotFoundException e) {
+        ExceptionResponse response = getExceptionResponse(HttpStatus.BAD_REQUEST, "EMAIL_NOT_FOUND");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+
+    @ExceptionHandler
+    public ResponseEntity<ExceptionResponse> handleException(PersonExistsException e) {
+        ExceptionResponse response = getExceptionResponse(HttpStatus.BAD_REQUEST, "PERSON_EXISTS");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+
+    private static ExceptionResponse getExceptionResponse(HttpStatus methodNotAllowed, String message) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setHttpStatus(methodNotAllowed);
+        response.setHttpStatusCode(methodNotAllowed.value());
+        response.setTimestamp(new Date());
+        response.setMessage(message);
+        return response;
+    }
 }

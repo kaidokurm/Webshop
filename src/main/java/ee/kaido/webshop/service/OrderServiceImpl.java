@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
+
 @Log4j2
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -25,15 +26,8 @@ public class OrderServiceImpl implements OrderService {
 
     public double calculateOrderSum(List<Product> products) {
         return products.stream()
-                                //p->p.getPrice() on sama mis Product::getPrice
-                .mapToDouble(Product::getPrice)//map (asendab) k]ik tooted hinnaga (double kujul)
+                .mapToDouble(Product::getPrice)
                 .sum();
-
-//        double sum=0;
-//        for (Product p: products){
-//            sum+=p.getPrice();
-//        }
-//        return sum;
     }
 
     public Long saveToDatabase(List<Product> products, double orderSum) {
@@ -46,14 +40,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public List<Product> getAllProductsFromDb(List<Product> products) {
-//        List<Product> originalProducts = new ArrayList<>();
-//        for (Product p: products) {
-//            Long productId = p.getId();
-//            Product originalProduct = productRepository.findById(productId).get();
-//            originalProducts.add(originalProduct);
-//        }
-//        return originalProducts;
-        return products.stream()//avab voolu
+        return products.stream()
                 .map(p -> {
                     try {
                         return productCache.getProduct(p.getId());
@@ -61,7 +48,7 @@ public class OrderServiceImpl implements OrderService {
                         log.error("Cache error {}", e.getMessage());
                         return null;
                     }
-                })//v]tab k]ik ja v]tab k]ik 'ra
+                })
                 .collect(Collectors.toList());
 
     }

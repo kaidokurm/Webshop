@@ -8,22 +8,20 @@ import java.util.ArrayList;
 public class EveryPayResponse {
     private String account_name;
     private String order_reference;
-    //        private String email;
-//        private String customer_ip;
-//        private String customer_url;
-//        private String payment_created_at;
-//        private double initial_amount;
-//        private double standing_amount;
-//        private String payment_reference;
+    private String email;
+    private String customer_ip;
+    private String customer_url;
+    private String payment_created_at;
+    private double initial_amount;
+    private double standing_amount;
+    private String payment_reference;
     private String payment_link;
     ArrayList<PaymentMethod> payment_methods = new ArrayList<>();
-
-    //        private String api_username;
-//        Warnings WarningsObject;
-//        private String stan;
-//        private String fraud_score;
-//        private String payment_state;
-//        private String payment_method;
+    private String api_username;
+    private String stan;
+    private String fraud_score;
+    private String payment_state;
+    private String payment_method;
 }
 
 @Data

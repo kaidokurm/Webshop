@@ -18,7 +18,7 @@ public class Subcategory {
     @Column(name = "id", nullable = false)
     private Long id;
     private String name;
-    @ManyToOne(cascade = CascadeType.MERGE)//fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Category category;
 
 }

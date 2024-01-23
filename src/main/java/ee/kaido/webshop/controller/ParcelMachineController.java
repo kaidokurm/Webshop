@@ -17,10 +17,10 @@ public class ParcelMachineController {
     @Autowired
     ParcelMachineService parcelMachineService;
 
-    @Operation(description = "Nii omniva kui Smartpost pakiautomaadi kättesaamine")
+    @Operation(description = "Nii Omniva kui Smartpost pakiautomaadi kättesaamine")
     @GetMapping("parcel-machines/{country}")
     public ResponseEntity<ParcelMachines> getParcelMachines(@PathVariable String country) {
-        log.info("Teaking parchel Machines {}",country);
+        log.info("Taking parcel Machines {}",country);
         country = country.toUpperCase();
         return ResponseEntity.ok()
                 .body(parcelMachineService.getParcelMachines(country));

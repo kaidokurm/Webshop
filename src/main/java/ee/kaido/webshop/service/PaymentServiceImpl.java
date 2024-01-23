@@ -1,4 +1,5 @@
 package ee.kaido.webshop.service;
+
 import ee.kaido.webshop.model.database.Order;
 import ee.kaido.webshop.model.database.PaymentState;
 import ee.kaido.webshop.model.request.input.EveryPayCheckPaymentResponse;
@@ -25,31 +26,21 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Value("${everypay.baseurl}")
     String everyPayBaseUrl;
-
     @Value("${everypay.credentials}")
     String credentials;
-
     @Value("${everypay.username}")
     String username;
-
     @Value("${everypay.account}")
     String account;
-
     @Value("${everypay.customerurl}")
     String customerUrl;
-
     @Autowired
     RestTemplate restTemplate;
-
     @Autowired
     OrderRepository orderRepository;
 
     public EveryPayUrl getPaymentLink(double amount, Long orderId) {
-        // aktiveerisin koodibloki
-        // ctrl + alt + m
         EveryPayData everyPayData = buildEveryPayData(amount, orderId);
-
-        // urli tõstame application.properties sisse
         String url = everyPayBaseUrl + "/payments/oneoff";
 
         HttpHeaders headers = new HttpHeaders();
@@ -58,9 +49,8 @@ public class PaymentServiceImpl implements PaymentService {
         HttpEntity<EveryPayData> httpEntity = new HttpEntity<>(everyPayData, headers);
 
         EveryPayUrl everyPayUrl = new EveryPayUrl();
-        // üks ja sama new koguaeg --> @Autowired
-        //RestTemplate restTemplate = new RestTemplate(); // võimaldab teha HTTP päringuid
-        ResponseEntity<EveryPayResponse> response = restTemplate.exchange(url, HttpMethod.POST,httpEntity, EveryPayResponse.class);
+        ResponseEntity<EveryPayResponse> response = restTemplate.exchange(
+                url, HttpMethod.POST, httpEntity, EveryPayResponse.class);
         if (response.getStatusCodeValue() == 201 && response.getBody() != null) {
             everyPayUrl.setUrl(response.getBody().getPayment_link());
         }
@@ -78,28 +68,22 @@ public class PaymentServiceImpl implements PaymentService {
         everyPayData.setTimestamp(ZonedDateTime.now().toString());
         System.out.println(new Date()); // log4j2
         log.info(new Date().toString());
-        everyPayData.setCustomer_url(customerUrl); // serverisse üles heroku --
-        // java ja front-end (Angular/React)
+        everyPayData.setCustomer_url(customerUrl);
         return everyPayData;
     }
 
 
     public Boolean checkIfOrderPaid(Long orderId, String paymentRef) {
-
-        // restTemplate välised HTTP päringud   --->  autowired (üks mälukoht)
-        // 1. URL    2. GET/POST    3.   Body + Headers
-
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Basic " + credentials);
         HttpEntity httpEntity = new HttpEntity<>(headers);
-        ResponseEntity<EveryPayCheckPaymentResponse> response = restTemplate.exchange(everyPayBaseUrl + "/payments/" + paymentRef + "?" + username,
-                HttpMethod.GET,httpEntity, EveryPayCheckPaymentResponse.class);
+        ResponseEntity<EveryPayCheckPaymentResponse> response = restTemplate.exchange(
+                everyPayBaseUrl + "/payments/" + paymentRef + "?" + username,
+                HttpMethod.GET, httpEntity, EveryPayCheckPaymentResponse.class);
 
-        if (response.getStatusCodeValue() == 200 &&  response.getBody() != null) {
+        if (response.getStatusCodeValue() == 200 && response.getBody() != null) {
             String paymentState = response.getBody().getPayment_state();
             Order order = orderRepository.findById(orderId).get();
-            // switch --> if else
-            // switch võimaldab kontrollida ühte muutujat erinevate väärtuste vastu
             switch (paymentState) {
                 case "failed":
                     order.setPaymentState(PaymentState.FAILED);

@@ -1,5 +1,6 @@
 package ee.kaido.webshop.model.database;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,7 @@ import javax.persistence.Id;
 @NoArgsConstructor
 public class Person {
     @Id
+    @Schema(description = "ID")
     private String personCode;
     @Column(unique = true)
     private String email;
@@ -23,4 +25,5 @@ public class Person {
     private String lastName;
     private String phone;
     private String password;
+    private String role;
 }

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-//teeme vahem'lu t[hjaks kui toode kustutatakse v]i muudetakse  //productCache.emptyCache();
 
 @Log4j2
 @RestController
@@ -21,9 +20,8 @@ import java.util.concurrent.ExecutionException;
 @RequestMapping("products")
 public class ProductController {
 
-    //List<Product> products = new ArrayList<>();
-    @Autowired//tekitatakse automaatne [hendus
-            ProductRepository productRepository;
+    @Autowired
+    ProductRepository productRepository;
 
     @Autowired
     ProductCache productCache;
@@ -37,7 +35,7 @@ public class ProductController {
 
     @Operation(description = "Add a new product")
     @PostMapping
-    public ResponseEntity<List<Product>> addProduct(@RequestBody Product product) {//responceEntity juures saan vahetada
+    public ResponseEntity<List<Product>> addProduct(@RequestBody Product product) {
         productRepository.save(product);
         return ResponseEntity.status(HttpStatus.CREATED)//created()
                 .body(productRepository.getAllByOrderByIdAsc());
@@ -46,7 +44,7 @@ public class ProductController {
     @Operation(description = "Delete a product with id")
     @DeleteMapping("/{id}")
     public ResponseEntity<List<Product>> deleteProduct(@PathVariable Long id) {
-        productCache.emptyCache();//teeme vahem'lu t[hjaks kui toode kustutatakse v]i muudetakse  //productCache.emptyCache();
+        productCache.emptyCache();
         productRepository.deleteById(id);
         return ResponseEntity.ok().body(productRepository.getAllByOrderByIdAsc());
     }
@@ -88,7 +86,6 @@ public class ProductController {
         updatedProduct.setStock(++productStock);
         productRepository.save(updatedProduct);
         productCache.updateCache(updatedProduct);
-        //CACHE UUENDATUT TOOTE LISAMINE
         return ResponseEntity.ok()
                 .body(productRepository.getAllByOrderByIdAsc());
     }
@@ -105,19 +102,18 @@ public class ProductController {
             productRepository.save(updatedProduct);
             productCache.updateCache(updatedProduct);
         }
-        //CACHE UUENDATUT TOOTE LISAMINE
         return ResponseEntity.ok()
                 .body(productRepository.getAllByOrderByIdAsc());
     }
 
 
-    @GetMapping("-positive-stock") // localhost:8080/products
+    @GetMapping("-positive-stock")
     public ResponseEntity<List<Product>> getPositiveStockProducts() {
         return ResponseEntity.ok().body(productRepository
                 .getAllByStockGreaterThanOrderByIdAsc(0));
     }
 
-    @GetMapping("-active") // localhost:8080/products
+    @GetMapping("-active")
     public ResponseEntity<List<Product>> getActiveProducts() {
         return ResponseEntity.ok().body(productRepository
                 .getAllByStockGreaterThanAndActiveEqualsOrderByIdAsc(0, true));

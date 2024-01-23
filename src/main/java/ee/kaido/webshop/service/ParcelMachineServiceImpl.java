@@ -26,7 +26,7 @@ public class ParcelMachineServiceImpl implements ParcelMachineService {
     RestTemplate restTemplate;
 
     public ParcelMachines getParcelMachines(String country) {
-        ParcelMachines parcelMachines = new ParcelMachines(); // parem klõps -> refactor -> rename
+        ParcelMachines parcelMachines = new ParcelMachines();
         parcelMachines.setOmnivaParcelMachines(fetchOmnivaParcelMachines(country));
         if (country.equals("EE")) {
             parcelMachines.setSmartpostParcelMachines(fetchSmartpostParcelMachines());
@@ -55,7 +55,7 @@ public class ParcelMachineServiceImpl implements ParcelMachineService {
     private List<OmnivaParcelMachine> fetchOmnivaParcelMachines(String country) {
         log.info("Taking Omniva parcel machines");
         ResponseEntity<OmnivaParcelMachine[]> response = restTemplate
-                .exchange(omnivaUrl, HttpMethod.GET, null,OmnivaParcelMachine[].class);
+                .exchange(omnivaUrl, HttpMethod.GET, null, OmnivaParcelMachine[].class);
 
         List<OmnivaParcelMachine> omnivaParcelMachine = new ArrayList<>();
         if (response.getBody() != null) {
@@ -66,13 +66,6 @@ public class ParcelMachineServiceImpl implements ParcelMachineService {
                         return p.getA0_NAME().equals(country);
                     })
                     .collect(Collectors.toList());
-
-//            List<OmnivaParcelMachine> omnivaParcelMachinesFiltered = new ArrayList<>();
-//            for (OmnivaParcelMachine p: omnivaParcelMachines) {
-//                if (p.getA0_NAME().equals(country)) {
-//                    omnivaParcelMachinesFiltered.add(p);
-//                }
-//            }
         }
         return omnivaParcelMachine;
     }

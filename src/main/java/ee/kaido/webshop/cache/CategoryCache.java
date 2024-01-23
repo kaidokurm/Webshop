@@ -18,29 +18,21 @@ public class CategoryCache {
     // google guava cache
     @Autowired
     CategoryRepository categoryRepository;
-
-    //cache loading otsustab, kas v]tab cachest([likiire ja v'ikese j]udlusega
-    //v]i v]tab andmebaasist
     private final LoadingCache<Long, Category> categoryLoadingCache= CacheBuilder
             .newBuilder()
-            .expireAfterAccess(10, TimeUnit.SECONDS)//unustab 'ra 10 sekukundi p'rast
+            .expireAfterAccess(10, TimeUnit.MINUTES)
             .build(new CacheLoader<Long, Category>() {
                 @Override
                 public Category load(Long id) {
-                    //siia siis mida teeb kui cachest ei leia
                     log.info("Get Category from DataBase");
                     return categoryRepository.findById(id).get();
                 }
             });
 
-    //avalik funktsioon mis v]tab cachest kui ei ole siis andmebaasist
-    //vaatab k]igepealt
     public Category getCategory(Long id) throws ExecutionException {
         log.info("Get Category");
         return categoryLoadingCache.get(id);
     }
-
-    //t[hjendab
     public void emptyCache(){
         categoryLoadingCache.invalidateAll();
     }
